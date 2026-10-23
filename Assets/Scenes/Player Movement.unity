@@ -4203,6 +4203,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerMovement
   moveSpeed: 10
+  cameraTransform: {fileID: 1394201845}
+  mouseSensitivity: 0.1
+  stickSensitivity: 150
+  minPitch: -80
+  maxPitch: 80
 --- !u!143 &950020816
 CharacterController:
   m_ObjectHideFlags: 0
