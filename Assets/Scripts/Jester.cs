@@ -14,6 +14,8 @@ public enum EnemyState
 public class Jester : MonoBehaviour
 {
     [Header("Waypoint Info")]
+    public float wanderRadius = 10f;
+    public float waitTime = 2f;
     public float minRange = 5f;
     public float maxRange = 35f;
     public List<GameObject> waypoints = new List<GameObject>();
@@ -28,30 +30,33 @@ public class Jester : MonoBehaviour
     private EnemyState currentState = EnemyState.Patrol;
     //private EnemyState previousState = EnemyState.Patrol;
 
+    private float timer;
 
     private Vector3 soundPosition;
 
     // these are for the hearing sound events from the sound system script
-    private void OnEnable()
-    {
-        SoundSystem.OnSoundMade += HearSound;
-    }
+    //private void OnEnable()
+    //{
+    //    SoundSystem.OnSoundMade += HearSound;
+    //}
 
-    private void OnDisable()
-    {
-        SoundSystem.OnSoundMade -= HearSound;
-    }
+    //private void OnDisable()
+    //{
+    //    SoundSystem.OnSoundMade -= HearSound;
+    //}
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         jester = GetComponent<NavMeshAgent>();
         jester.speed = walkSpeed;
+        timer = waitTime;
     }
 
     // Update is called once per frame
     void Update()
     {
+
         switch (currentState)
         {
             case EnemyState.Patrol: Patrol(); break;
@@ -63,17 +68,41 @@ public class Jester : MonoBehaviour
     }
     public void Patrol()
     {
-        jester.isStopped = false;
+        timer += Time.deltaTime;
 
-        // wait till path has finished calculating
-        if (jester.pathPending)
-            return;
-
-        // if jester reached destination, set new point
-        if (jester.remainingDistance <= jester.stoppingDistance)
+        if (timer >= waitTime || (!jester.pathPending && jester.remainingDistance <= jester.stoppingDistance))
         {
-            SetNewPatrolDestination();
+            Vector3 newPos = GetRandomNavMeshPosition(transform.position, wanderRadius);
+            jester.SetDestination(newPos);
+            timer = 0f;
         }
+
+        //jester.isStopped = false;
+
+        //// wait till path has finished calculating
+        //if (jester.pathPending)
+        //    return;
+
+        //// if jester reached destination, set new point
+        //if (jester.remainingDistance <= jester.stoppingDistance)
+        //{
+        //    SetNewPatrolDestination();
+        //}
+    }
+
+    private Vector3 GetRandomNavMeshPosition(Vector3 origin, float distance)
+    {
+        Vector3 randomDirection = Random.insideUnitSphere * distance;
+        randomDirection += origin;
+
+        NavMeshHit navHit;
+
+        if (NavMesh.SamplePosition(randomDirection, out navHit, distance, NavMesh.AllAreas))
+        {
+            return navHit.position;
+        }
+
+        return origin;
     }
 
     private void SetNewPatrolDestination()
@@ -139,4 +168,14 @@ public class Jester : MonoBehaviour
             currentState = EnemyState.Patrol;
         }
     }
+
+
+#if UNITY_EDITOR
+    // Optional: Draw the wander radius in the editor for debugging
+    private void OnDrawGizmosSelected()
+    {
+        Gizmos.color = Color.green;
+        Gizmos.DrawWireSphere(transform.position, wanderRadius);
+    }
+#endif
 }
