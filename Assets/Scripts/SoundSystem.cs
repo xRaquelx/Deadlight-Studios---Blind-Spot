@@ -10,12 +10,12 @@ public enum SoundPriority
 
 public static class SoundSystem
 {
-    public static event Action<Vector3, SoundPriority> OnSoundMade;
+    public static event Action<Vector3, float, SoundPriority> OnSoundMade;
 
     // position where sound is made,, radius for max distance it can be heard
     // OnSoundMade is an event that notifies the enemy listening for sounds.
-    public static void MakeSound(Vector3 position, SoundPriority priority)
+    public static void MakeSound(Vector3 position, float radius, SoundPriority priority)
     {
-        OnSoundMade?.Invoke(position, priority);
+        OnSoundMade?.Invoke(position, radius, priority);
     }
 }

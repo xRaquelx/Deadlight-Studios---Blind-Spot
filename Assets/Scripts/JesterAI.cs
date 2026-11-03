@@ -1,4 +1,5 @@
 
+using System.Collections;
 using System.Diagnostics.Metrics;
 using UnityEngine;
 using UnityEngine.AI;
@@ -32,16 +33,23 @@ public class JesterAI : MonoBehaviour
 
     [Header("Investigation")]
     public float playerDetectRadius = 3f;
+    public float soundStoppingDistance = 5f;
 
     [Header("Spawning")]
     public float spawnDelay = 3f;
     private float spawnAt;
 
     [Header("Attacking")]
-    private bool activated;
+    private bool activated; 
+    private bool hasKilledPlayer;
 
     private Vector3 soundPosition;
     private SoundPriority currentSoundPriority = SoundPriority.Low;
+
+    [Header("Waiting")]
+    public float waitBeforeWandering = 5f;
+    private bool isWaiting;
+
 
 
     // these are for the hearing sound events from the sound system script
@@ -60,7 +68,7 @@ public class JesterAI : MonoBehaviour
         agent = GetComponent<NavMeshAgent>();
 
         agent.speed = wanderSpeed;
-        agent.stoppingDistance = 0.5f;
+        agent.stoppingDistance = soundStoppingDistance;
 
         spawnAt = Time.time + spawnDelay;
         agent.isStopped = true;
@@ -110,7 +118,9 @@ public class JesterAI : MonoBehaviour
 
         wanderTimer -= Time.deltaTime;
 
-        if (wanderTimer <= 0f || (!agent.pathPending && agent.remainingDistance <= agent.stoppingDistance))
+        if (agent.pathPending) return;
+
+        if (wanderTimer <= 0f || agent.remainingDistance <= agent.stoppingDistance)
         {
             PickWanderDestination();
         }
@@ -121,11 +131,14 @@ public class JesterAI : MonoBehaviour
         agent.isStopped = false;
         agent.speed = chaseSpeed;
 
-        if (agent.pathPending)
-            return;
+        if (agent.pathPending) return;
 
-        if (!agent.hasPath || agent.remainingDistance <= agent.stoppingDistance)
+        if (agent.remainingDistance <= agent.stoppingDistance + 0.2f)
         {
+            if (agent.velocity.sqrMagnitude > 0.1f) return;
+
+            if (isWaiting) return;
+
             agent.ResetPath();
             agent.isStopped = true;
 
@@ -139,11 +152,8 @@ public class JesterAI : MonoBehaviour
                     return;
                 }
             }
-            currentSoundPriority = SoundPriority.Low;
-            agent.isStopped = false;
-            agent.speed = wanderSpeed;
-            state = State.Wander;
-            wanderTimer = 0f;
+
+            StartCoroutine(WaitBeforeWander());
         }
     }
 
@@ -158,23 +168,38 @@ public class JesterAI : MonoBehaviour
 
         agent.isStopped = true;
 
-        // face player
         Vector3 direction = player.position - transform.position;
         direction.y = 0f;
 
         if (direction.sqrMagnitude > 0.001f)
-        {
             transform.rotation = Quaternion.LookRotation(direction);
-        }
+    }
 
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("Player") && !hasKilledPlayer)
+        {
+            hasKilledPlayer = true;
+            KillPlayer();
+        }
+    }
+
+    void KillPlayer()
+    {
         Debug.Log("DEADDDDD");
+
+        // start death logic
     }
 
     void PickWanderDestination()
     {
         wanderTimer = wanderChangeInterval;
 
-        Vector3 randomPoint = transform.position + Random.insideUnitSphere * wanderRadius;
+        Vector3 randomPoint = transform.position + new Vector3(
+            Random.Range(-wanderRadius, wanderRadius),
+            0f,
+            Random.Range(-wanderRadius, wanderRadius)
+        );
 
         NavMeshHit hit;
 
@@ -189,7 +214,7 @@ public class JesterAI : MonoBehaviour
     }
 
 
-    private void HearSound(Vector3 position, SoundPriority priority)
+    private void HearSound(Vector3 position, float radius, SoundPriority priority)
     {
         if (!activated)
             return;
@@ -201,7 +226,9 @@ public class JesterAI : MonoBehaviour
 
         // prioritizing
         // basically if jester is already investigating a sound, it'll only change if the sound is higher
-        if (state == State.Investigate && priority <= currentSoundPriority) return;
+        if (state == State.Investigate && priority < currentSoundPriority) return;
+
+        if (distance > radius) return;
 
         soundPosition = position;
         currentSoundPriority = priority;
@@ -209,7 +236,32 @@ public class JesterAI : MonoBehaviour
         state = State.Investigate;
 
         agent.speed = chaseSpeed;
+        agent.stoppingDistance = soundStoppingDistance;
         agent.isStopped = false;
+        agent.ResetPath();
         agent.SetDestination(soundPosition);
+    }
+
+    IEnumerator WaitBeforeWander()
+    {
+        isWaiting = true;
+
+        agent.isStopped = true;
+
+        yield return new WaitForSeconds(waitBeforeWandering);
+
+        currentSoundPriority = SoundPriority.Low;
+
+        state = State.Wander;
+
+        agent.speed = wanderSpeed;
+        agent.isStopped = false;
+
+        // Reset timer before choosing a destination
+        wanderTimer = wanderChangeInterval;
+
+        PickWanderDestination();
+
+        isWaiting = false;
     }
 }

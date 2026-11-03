@@ -20,19 +20,19 @@ public class PlayerSoundTest : MonoBehaviour
         if (Keyboard.current.digit1Key.wasPressedThisFrame)
         {
             Debug.Log("1 PRESSED");
-            SoundSystem.MakeSound(transform.position, SoundPriority.Low);
+            SoundSystem.MakeSound(transform.position, 10f, SoundPriority.Low);
         }
 
         if (Keyboard.current.digit2Key.wasPressedThisFrame)
         {
             Debug.Log("2 PRESSED");
-            SoundSystem.MakeSound(transform.position, SoundPriority.Medium);
+            SoundSystem.MakeSound(transform.position, 20f, SoundPriority.Medium);
         }
 
         if (Keyboard.current.digit3Key.wasPressedThisFrame)
         {
             Debug.Log("3 PRESSED");
-            SoundSystem.MakeSound(transform.position, SoundPriority.High);
+            SoundSystem.MakeSound(transform.position, 30f, SoundPriority.High);
         }
     }
 }
