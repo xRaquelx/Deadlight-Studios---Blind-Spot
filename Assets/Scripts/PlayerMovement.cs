@@ -39,11 +39,11 @@ public class PlayerMovement : MonoBehaviour
             look += Mouse.current.delta.ReadValue() * mouseSensitivity;
 
         // Right stick: it's a rate, so it needs deltaTime
-        //if (Gamepad.current != null)
-        //{
-        //    Vector2 stick = Gamepad.current.rightStick.ReadValue();
-        //    look += stick * stickSensitivity * Time.deltaTime;
-        //}
+        if (Gamepad.current != null)
+        {
+            Vector2 stick = Gamepad.current.rightStick.ReadValue();
+            look += stick * stickSensitivity * Time.deltaTime;
+        }
 
         // Left/right turns the whole body
         transform.Rotate(Vector3.up * look.x);
@@ -61,44 +61,44 @@ public class PlayerMovement : MonoBehaviour
         if (Keyboard.current != null)
         {
             if (Keyboard.current.wKey.isPressed)
-                input.y -= 1f;
-
-            if (Keyboard.current.aKey.isPressed)
-                input.x += 1f;
-
-            if (Keyboard.current.sKey.isPressed)
                 input.y += 1f;
 
-            if (Keyboard.current.dKey.isPressed)
+            if (Keyboard.current.aKey.isPressed)
                 input.x -= 1f;
+
+            if (Keyboard.current.sKey.isPressed)
+                input.y -= 1f;
+
+            if (Keyboard.current.dKey.isPressed)
+                input.x += 1f;
         }
 
         // Controller controls
-        //if (Gamepad.current != null)
-        //{
-        //    Vector2 controllerInput = Gamepad.current.leftStick.ReadValue();
+        if (Gamepad.current != null)
+        {
+            Vector2 controllerInput = Gamepad.current.leftStick.ReadValue();
 
-        //    // D-pad support
-        //    if (Gamepad.current.dpad.left.isPressed)
-        //        controllerInput.x -= 1f;
+            // D-pad support
+            if (Gamepad.current.dpad.left.isPressed)
+                controllerInput.x -= 1f;
 
-        //    if (Gamepad.current.dpad.right.isPressed)
-        //        controllerInput.x += 1f;
+            if (Gamepad.current.dpad.right.isPressed)
+                controllerInput.x += 1f;
 
-        //    if (Gamepad.current.dpad.down.isPressed)
-        //        controllerInput.y -= 1f;
+            if (Gamepad.current.dpad.down.isPressed)
+                controllerInput.y -= 1f;
 
-        //    if (Gamepad.current.dpad.up.isPressed)
-        //        controllerInput.y += 1f;
+            if (Gamepad.current.dpad.up.isPressed)
+                controllerInput.y += 1f;
 
-        //    // Prefer controller input when it is being used
-        //    if (controllerInput.sqrMagnitude > 0.01f)
-        //        input = controllerInput;
-        //}
+            // Prefer controller input when it is being used
+            if (controllerInput.sqrMagnitude > 0.01f)
+                input = controllerInput;
+        }
 
         input = Vector2.ClampMagnitude(input, 1f);
 
-        Vector3 movement = new Vector3(input.x, 0f, input.y);
+        Vector3 movement = transform.right * input.x + transform.forward * input.y;
 
         controller.Move(movement * moveSpeed * Time.deltaTime);
     }
