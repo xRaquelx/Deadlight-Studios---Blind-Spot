@@ -20,6 +20,7 @@ public class JesterAI : MonoBehaviour
     [Header("References")]
     public Transform player;
     private NavMeshAgent agent;
+    public Animator animator;
 
     [Header("Movement")]
     public float wanderSpeed = 1.5f;
@@ -69,9 +70,14 @@ public class JesterAI : MonoBehaviour
 
         agent.speed = wanderSpeed;
         agent.stoppingDistance = soundStoppingDistance;
+        agent.acceleration = 12f;
 
         spawnAt = Time.time + spawnDelay;
         agent.isStopped = true;
+
+        animator.SetBool("Run", false);
+        animator.SetBool("Attack", false);
+        animator.SetBool("Captured", false);
     }
 
     void Update()
@@ -113,6 +119,10 @@ public class JesterAI : MonoBehaviour
 
     void DoWander()
     {
+        animator.SetBool("Run", false);
+        animator.SetBool("Attack", false);
+        animator.SetBool("Captured", false);
+
         agent.speed = wanderSpeed;
         agent.isStopped = false;
 
@@ -128,7 +138,15 @@ public class JesterAI : MonoBehaviour
 
     void DoInvestigate()
     {
-        agent.isStopped = false;
+        if (isWaiting)
+        {
+            agent.isStopped = true;
+            animator.SetBool("Run", false);
+            return;
+        }
+        animator.SetBool("Attack", false);
+        animator.SetBool("Captured", false);
+
         agent.speed = chaseSpeed;
 
         if (agent.pathPending) return;
@@ -137,10 +155,8 @@ public class JesterAI : MonoBehaviour
         {
             if (agent.velocity.sqrMagnitude > 0.1f) return;
 
-            if (isWaiting) return;
-
-            agent.ResetPath();
             agent.isStopped = true;
+            agent.ResetPath();
 
             if (player != null)
             {
@@ -154,7 +170,10 @@ public class JesterAI : MonoBehaviour
             }
 
             StartCoroutine(WaitBeforeWander());
+            return;
         }
+        agent.isStopped = false;
+        animator.SetBool("Run", true);
     }
 
     void DoAttack()
@@ -173,6 +192,10 @@ public class JesterAI : MonoBehaviour
 
         if (direction.sqrMagnitude > 0.001f)
             transform.rotation = Quaternion.LookRotation(direction);
+
+        animator.SetBool("Run", false);
+        animator.SetBool("Attack", true);
+        animator.SetBool("Captured", false);
     }
 
     private void OnTriggerEnter(Collider other)
@@ -188,6 +211,9 @@ public class JesterAI : MonoBehaviour
     {
         Debug.Log("DEADDDDD");
 
+        animator.SetBool("Run", false);
+        animator.SetBool("Attack", false);
+        animator.SetBool("Captured", true);
         // start death logic
     }
 
