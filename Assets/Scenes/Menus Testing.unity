@@ -359,6 +359,7 @@ GameObject:
   - component: {fileID: 81511767}
   - component: {fileID: 81511766}
   - component: {fileID: 81511765}
+  - component: {fileID: 81511768}
   m_Layer: 5
   m_Name: MainMenu
   m_TagString: Untagged
@@ -480,6 +481,21 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 81511763}
   m_CullTransparentMesh: 1
+--- !u!114 &81511768
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 81511763}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e19747de3f5aca642ab2be37e372fb86, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Outline
+  m_EffectColor: {r: 1, g: 1, b: 1, a: 1}
+  m_EffectDistance: {x: 2, y: -2}
+  m_UseGraphicAlpha: 1
 --- !u!1 &100949020
 GameObject:
   m_ObjectHideFlags: 0
@@ -834,6 +850,7 @@ GameObject:
   - component: {fileID: 199009283}
   - component: {fileID: 199009282}
   - component: {fileID: 199009281}
+  - component: {fileID: 199009284}
   m_Layer: 5
   m_Name: Quit
   m_TagString: Untagged
@@ -955,6 +972,21 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 199009279}
   m_CullTransparentMesh: 1
+--- !u!114 &199009284
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 199009279}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e19747de3f5aca642ab2be37e372fb86, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Outline
+  m_EffectColor: {r: 1, g: 1, b: 1, a: 1}
+  m_EffectDistance: {x: 2, y: -2}
+  m_UseGraphicAlpha: 1
 --- !u!1 &222519577
 GameObject:
   m_ObjectHideFlags: 0
@@ -3081,6 +3113,7 @@ GameObject:
   - component: {fileID: 553813236}
   - component: {fileID: 553813235}
   - component: {fileID: 553813237}
+  - component: {fileID: 553813238}
   m_Layer: 0
   m_Name: MenuManagerObj
   m_TagString: Untagged
@@ -3104,6 +3137,7 @@ MonoBehaviour:
   menuCamera: {fileID: 1687213291}
   playerCamera: {fileID: 1394201848}
   playerMovement: {fileID: 950020815}
+  firstSelectedButton: {fileID: 1678259512}
 --- !u!4 &553813236
 Transform:
   m_ObjectHideFlags: 0
@@ -3132,10 +3166,23 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PauseMenuScript
   pauseMenu: {fileID: 804836179}
-  mainMenu: {fileID: 1423767950}
+  mainMenuManager: {fileID: 553813235}
   playerMovement: {fileID: 950020815}
   menuCamera: {fileID: 1687213291}
   playerCamera: {fileID: 1394201848}
+  firstSelectedButton: {fileID: 599984400}
+--- !u!114 &553813238
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 553813234}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0cb903602924476468b8f5c55770e144, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MenuOutlineManager
 --- !u!1 &561766489
 GameObject:
   m_ObjectHideFlags: 0
@@ -3317,6 +3364,7 @@ GameObject:
   - component: {fileID: 599984404}
   - component: {fileID: 599984403}
   - component: {fileID: 599984402}
+  - component: {fileID: 599984405}
   m_Layer: 5
   m_Name: Play
   m_TagString: Untagged
@@ -3438,6 +3486,21 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 599984400}
   m_CullTransparentMesh: 1
+--- !u!114 &599984405
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 599984400}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e19747de3f5aca642ab2be37e372fb86, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Outline
+  m_EffectColor: {r: 1, g: 1, b: 1, a: 1}
+  m_EffectDistance: {x: 2, y: -2}
+  m_UseGraphicAlpha: 1
 --- !u!1 &604175137
 GameObject:
   m_ObjectHideFlags: 0
@@ -4799,6 +4862,7 @@ GameObject:
   - component: {fileID: 791190752}
   - component: {fileID: 791190751}
   - component: {fileID: 791190750}
+  - component: {fileID: 791190753}
   m_Layer: 5
   m_Name: Quit
   m_TagString: Untagged
@@ -4920,6 +4984,21 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 791190748}
   m_CullTransparentMesh: 1
+--- !u!114 &791190753
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 791190748}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e19747de3f5aca642ab2be37e372fb86, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Outline
+  m_EffectColor: {r: 1, g: 1, b: 1, a: 1}
+  m_EffectDistance: {x: 2, y: -2}
+  m_UseGraphicAlpha: 0
 --- !u!1 &799428932
 GameObject:
   m_ObjectHideFlags: 0
@@ -8475,6 +8554,7 @@ GameObject:
   - component: {fileID: 1322924950}
   - component: {fileID: 1322924949}
   - component: {fileID: 1322924948}
+  - component: {fileID: 1322924951}
   m_Layer: 5
   m_Name: Settings
   m_TagString: Untagged
@@ -8584,6 +8664,21 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1322924946}
   m_CullTransparentMesh: 1
+--- !u!114 &1322924951
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1322924946}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e19747de3f5aca642ab2be37e372fb86, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Outline
+  m_EffectColor: {r: 1, g: 1, b: 1, a: 1}
+  m_EffectDistance: {x: 2, y: -2}
+  m_UseGraphicAlpha: 1
 --- !u!1 &1336433735
 GameObject:
   m_ObjectHideFlags: 0
@@ -8821,6 +8916,7 @@ GameObject:
   - component: {fileID: 1356844843}
   - component: {fileID: 1356844842}
   - component: {fileID: 1356844841}
+  - component: {fileID: 1356844844}
   m_Layer: 5
   m_Name: Settings
   m_TagString: Untagged
@@ -8930,6 +9026,21 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1356844839}
   m_CullTransparentMesh: 1
+--- !u!114 &1356844844
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1356844839}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e19747de3f5aca642ab2be37e372fb86, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Outline
+  m_EffectColor: {r: 1, g: 1, b: 1, a: 1}
+  m_EffectDistance: {x: 2, y: -2}
+  m_UseGraphicAlpha: 1
 --- !u!1 &1357619561
 GameObject:
   m_ObjectHideFlags: 0
@@ -9673,7 +9784,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1423767951
 RectTransform:
   m_ObjectHideFlags: 0
@@ -10669,6 +10780,7 @@ GameObject:
   - component: {fileID: 1678259516}
   - component: {fileID: 1678259515}
   - component: {fileID: 1678259514}
+  - component: {fileID: 1678259517}
   m_Layer: 5
   m_Name: Play
   m_TagString: Untagged
@@ -10790,6 +10902,21 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1678259512}
   m_CullTransparentMesh: 1
+--- !u!114 &1678259517
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1678259512}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e19747de3f5aca642ab2be37e372fb86, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Outline
+  m_EffectColor: {r: 1, g: 1, b: 1, a: 1}
+  m_EffectDistance: {x: 2, y: -2}
+  m_UseGraphicAlpha: 1
 --- !u!1 &1686547803
 GameObject:
   m_ObjectHideFlags: 0
