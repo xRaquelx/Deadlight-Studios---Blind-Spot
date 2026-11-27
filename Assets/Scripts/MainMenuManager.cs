@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class MainMenuManager : MonoBehaviour
 {
@@ -6,15 +7,27 @@ public class MainMenuManager : MonoBehaviour
     public Camera menuCamera;
     public Camera playerCamera;
     public PlayerMovement playerMovement;
+    public GameObject firstSelectedButton;
+
+    public bool IsInMainMenu { get; private set; }
 
     void Start()
     {
+        ShowMainMenu();
+    }
+
+    public void ShowMainMenu()
+    {
+        IsInMainMenu = true;
         mainMenu.SetActive(true);
 
         menuCamera.enabled = true;
         playerCamera.enabled = false;
 
         playerMovement.enabled = false;
+
+        EventSystem.current.SetSelectedGameObject(null);
+        EventSystem.current.SetSelectedGameObject(firstSelectedButton);
 
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;

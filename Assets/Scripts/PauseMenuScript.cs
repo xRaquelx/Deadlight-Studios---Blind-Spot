@@ -1,15 +1,18 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.EventSystems;
 
 public class PauseMenuScript : MonoBehaviour
 {
     public GameObject pauseMenu;
-    public GameObject mainMenu;
+    public MainMenuManager mainMenuManager;
 
     public PlayerMovement playerMovement;
 
     public Camera menuCamera;
     public Camera playerCamera;
+
+    public GameObject firstSelectedButton;
 
     private bool isPaused = false;
 
@@ -20,14 +23,24 @@ public class PauseMenuScript : MonoBehaviour
 
     void Update()
     {
-        if (Keyboard.current != null &&
-            Keyboard.current.escapeKey.wasPressedThisFrame)
+        if (Keyboard.current != null && Keyboard.current.escapeKey.wasPressedThisFrame)
         {
             if (isPaused)
                 ResumeGame();
             else
                 PauseGame();
         }
+
+        if (Gamepad.current != null && Gamepad.current.startButton.wasPressedThisFrame)
+        {
+            if (isPaused)
+                ResumeGame();
+            else
+                PauseGame();
+        }
+
+        if (mainMenuManager.IsInMainMenu)
+            return;
     }
 
     public void PauseGame()
@@ -38,6 +51,8 @@ public class PauseMenuScript : MonoBehaviour
         Time.timeScale = 0f;
 
         playerMovement.enabled = false;
+
+        EventSystem.current.SetSelectedGameObject(firstSelectedButton);
 
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
@@ -59,18 +74,9 @@ public class PauseMenuScript : MonoBehaviour
     public void ReturnToMainMenu()
     {
         isPaused = false;
-
         Time.timeScale = 1f;
-
         pauseMenu.SetActive(false);
-        mainMenu.SetActive(true);
 
-        playerMovement.enabled = false;
-
-        menuCamera.enabled = true;
-        playerCamera.enabled = false;
-
-        Cursor.lockState = CursorLockMode.None;
-        Cursor.visible = true;
+        mainMenuManager.ShowMainMenu();
     }
 }
