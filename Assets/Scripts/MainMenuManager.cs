@@ -1,5 +1,4 @@
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 public class MainMenuManager : MonoBehaviour
 {
@@ -35,8 +34,7 @@ public class MainMenuManager : MonoBehaviour
     }
 
     public void QuitGame()
-    {
-        Debug.Log("Quit button clicked!");
+    {     
         #if UNITY_EDITOR
                 UnityEditor.EditorApplication.isPlaying = false;
         #else
