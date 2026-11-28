@@ -2,7 +2,7 @@ using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class PlayerCamera : MonoBehaviour
+public class PolaroidCamera : MonoBehaviour
 {
     // in movement script, we can call this to decide when players should move slower 
     public bool cameraOut = false;
@@ -13,13 +13,19 @@ public class PlayerCamera : MonoBehaviour
 
     [Header("Other References")]
     [SerializeField] private Transform playerCameraPos;
-    [SerializeField] private Journal journal;
+    [SerializeField] private Journal journalScript;
 
     [Header("Polaoid Camera")]
     [SerializeField] private GameObject cameraOverlay;
     [SerializeField] private Camera polaroidCamera;
     [SerializeField] private RenderTexture photoRenderTexture;
 
+
+    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    void Start()
+    {
+        cameraOverlay.SetActive(false);
+    }
 
     private void OnEnable()
     {
@@ -43,6 +49,8 @@ public class PlayerCamera : MonoBehaviour
 
     private void ToggleCamera(InputAction.CallbackContext context)
     {
+        if (journalScript.journalOpen) return;
+
         // if the camera is out, make it not out
         cameraOut = !cameraOut;
         cameraOverlay.SetActive(cameraOut);
@@ -54,27 +62,27 @@ public class PlayerCamera : MonoBehaviour
     private void TakePicture(InputAction.CallbackContext context)
     {
         if (!cameraOut) return;
+        if (journalScript.journalOpen) return;
 
         Ray ray = new Ray(playerCameraPos.position, playerCameraPos.forward);
 
-        // if the ray doesnt hit anything within the distance
         if (Physics.Raycast(ray, out RaycastHit hitInfo))
         {
             GameObject photographedObject = hitInfo.collider.gameObject;
 
             Debug.Log("Took picture");
             Texture2D photo = CapturePhoto();
-            journal.AddPhoto(photographedObject.tag, photo);
+
+            journalScript.OpenJournal();
+            cameraOut = false;
+            cameraOverlay.SetActive(false);
+
+            journalScript.AddPhoto(photographedObject.tag, photo);
         }
     }
 
     private Texture2D CapturePhoto()
     {
-        // store the cams original render target
-        //RenderTexture previousTexture = playerCamera.targetTexture;
-        // make the camera render into our photo texture
-        //playerCamera.targetTexture = photoRenderTexture;
-
         // render the cams current view
         polaroidCamera.Render();
 
@@ -93,15 +101,8 @@ public class PlayerCamera : MonoBehaviour
 
         // restore prev settings
         RenderTexture.active = previousActive;
-        //playerCamera.targetTexture = previousTexture;
 
         return photo;
-    }
-
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
-        
     }
 
     // Update is called once per frame
@@ -111,10 +112,3 @@ public class PlayerCamera : MonoBehaviour
     }
 }
 
-
-
-//   add button to open and close
-
-//   click button to take picture
-//   will check what the tag is of the object
-//   sends it to the journal
