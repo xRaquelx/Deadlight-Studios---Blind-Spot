@@ -8,14 +8,15 @@ public class JesterAI : MonoBehaviour
 {
     public enum State
     {
-        Inactive,
+        Idle,
         Wander,
         Investigate,
+        Attack,
         Kill
     }
 
     [Header("State")]
-    public State state = State.Inactive;
+    public State state = State.Idle;
 
     [Header("References")]
     public Transform player;
@@ -89,19 +90,34 @@ public class JesterAI : MonoBehaviour
 
             return;
         }
+        if (!hasKilledPlayer && player != null)
+        {
+            float distance = Vector3.Distance(
+                player.position,
+                transform.position
+            );
 
+            if (distance <= playerDetectRadius)
+            {
+                Debug.Log("PLAYER DETECTED! DISTANCE: " + distance);
+
+                state = State.Kill;
+            }
+        }
         switch (state)
         {
-            case State.Wander:
-                DoWander();
-                break;
+            //case State.Wander:
+            //    DoWander();
+            //    break;
 
             case State.Investigate:
                 DoInvestigate();
                 break;
-
             case State.Kill:
-                DoAttack();
+                KillPlayer();
+                break;
+            case State.Attack:
+                DoAttack(); 
                 break;
         }
     }
@@ -109,12 +125,12 @@ public class JesterAI : MonoBehaviour
     public void Activate()
     {
         activated = true;
-        state = State.Wander;
+        //state = State.Wander;
 
         agent.speed = wanderSpeed;
         agent.isStopped = false;
 
-        PickWanderDestination();
+        //PickWanderDestination();
     }
 
     void DoWander()
@@ -138,12 +154,24 @@ public class JesterAI : MonoBehaviour
 
     void DoInvestigate()
     {
+        if (player != null)
+        {
+            float distanceToPlayer = Vector3.Distance(player.position, transform.position);
+
+            if (distanceToPlayer <= playerDetectRadius)
+            {
+                state = State.Kill;
+                return;
+            }
+        }
+
         if (isWaiting)
         {
             agent.isStopped = true;
             animator.SetBool("Run", false);
             return;
         }
+
         animator.SetBool("Attack", false);
         animator.SetBool("Captured", false);
 
@@ -158,64 +186,42 @@ public class JesterAI : MonoBehaviour
             agent.isStopped = true;
             agent.ResetPath();
 
-            if (player != null)
-            {
-                float distanceToPlayer = Vector3.Distance(player.position, soundPosition);
+            Debug.Log("Jester reached sound position.");
 
-                if (distanceToPlayer <= playerDetectRadius)
-                {
-                    state = State.Kill;
-                    return;
-                }
-            }
-
+            state = State.Attack;
             StartCoroutine(WaitBeforeWander());
             return;
         }
+        
         agent.isStopped = false;
         animator.SetBool("Run", true);
     }
 
     void DoAttack()
     {
-        if (player == null)
-        {
-            state = State.Wander;
-            agent.isStopped = false;
-            return;
-        }
-
         agent.isStopped = true;
-
-        Vector3 direction = player.position - transform.position;
-        direction.y = 0f;
-
-        if (direction.sqrMagnitude > 0.001f)
-            transform.rotation = Quaternion.LookRotation(direction);
 
         animator.SetBool("Run", false);
         animator.SetBool("Attack", true);
         animator.SetBool("Captured", false);
     }
 
-    private void OnTriggerEnter(Collider other)
-    {
-        if (other.CompareTag("Player") && !hasKilledPlayer)
-        {
-            hasKilledPlayer = true;
-            KillPlayer();
-        }
-    }
+void KillPlayer()
+{
+    if (hasKilledPlayer) return;
 
-    void KillPlayer()
-    {
-        Debug.Log("DEADDDDD");
+    hasKilledPlayer = true;
 
-        animator.SetBool("Run", false);
-        animator.SetBool("Attack", false);
-        animator.SetBool("Captured", true);
-        // start death logic
-    }
+    Debug.Log("KILL PLAYER CALLED!");
+
+    agent.isStopped = true;
+    agent.ResetPath();
+
+    animator.SetBool("Run", false);
+    animator.SetBool("Captured", true);
+
+    Debug.Log("Captured: " + animator.GetBool("Captured"));
+}
 
     void PickWanderDestination()
     {
@@ -248,7 +254,7 @@ public class JesterAI : MonoBehaviour
         float distance = Vector3.Distance(transform.position, position);
 
 
-        if (state == State.Kill) return;
+        if (hasKilledPlayer || state == State.Kill) return;
 
         // prioritizing
         // basically if jester is already investigating a sound, it'll only change if the sound is higher
@@ -276,6 +282,10 @@ public class JesterAI : MonoBehaviour
 
         yield return new WaitForSeconds(waitBeforeWandering);
 
+        animator.SetBool("Attack", false);
+        
+        //yield return new WaitForSeconds(waitBeforeWandering);
+
         currentSoundPriority = SoundPriority.Low;
 
         state = State.Wander;
@@ -286,7 +296,7 @@ public class JesterAI : MonoBehaviour
         // Reset timer before choosing a destination
         wanderTimer = wanderChangeInterval;
 
-        PickWanderDestination();
+        //PickWanderDestination();
 
         isWaiting = false;
     }
