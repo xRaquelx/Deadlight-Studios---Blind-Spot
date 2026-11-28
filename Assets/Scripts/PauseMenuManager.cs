@@ -2,10 +2,12 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.EventSystems;
 
-public class PauseMenuScript : MonoBehaviour
+public class PauseMenuManager : MonoBehaviour
 {
     public GameObject pauseMenu;
     public MainMenuManager mainMenuManager;
+
+    public SettingsMenuManager settingsMenuManager;
 
     public PlayerMovement playerMovement;
 
@@ -23,6 +25,9 @@ public class PauseMenuScript : MonoBehaviour
 
     void Update()
     {
+        if (mainMenuManager.IsInMainMenu || settingsMenuManager.BlocksPauseInput)
+            return;
+
         if (Keyboard.current != null && Keyboard.current.escapeKey.wasPressedThisFrame)
         {
             if (isPaused)
@@ -38,9 +43,6 @@ public class PauseMenuScript : MonoBehaviour
             else
                 PauseGame();
         }
-
-        if (mainMenuManager.IsInMainMenu)
-            return;
     }
 
     public void PauseGame()

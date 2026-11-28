@@ -35,6 +35,8 @@ public class MainMenuManager : MonoBehaviour
 
     public void PlayGame()
     {
+        IsInMainMenu = false;
+
         mainMenu.SetActive(false);
 
         menuCamera.enabled = false;
