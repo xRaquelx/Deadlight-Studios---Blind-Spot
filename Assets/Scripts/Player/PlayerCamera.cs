@@ -4,18 +4,22 @@ using UnityEngine.InputSystem;
 
 public class PlayerCamera : MonoBehaviour
 {
-    [SerializeField] private Transform playerCameraPos;
+    // in movement script, we can call this to decide when players should move slower 
+    public bool cameraOut = false;
 
+    [Header("Action References")]
     [SerializeField] private InputActionReference cameraReference;
     [SerializeField] private InputActionReference pictureReference;
 
+    [Header("Other References")]
+    [SerializeField] private Transform playerCameraPos;
     [SerializeField] private Journal journal;
 
-    [SerializeField] private Camera playerCamera;
+    [Header("Polaoid Camera")]
+    [SerializeField] private GameObject cameraOverlay;
+    [SerializeField] private Camera polaroidCamera;
     [SerializeField] private RenderTexture photoRenderTexture;
 
-    // in movement script, we can call this to decide when players should move slower 
-    public bool cameraOut = false;
 
     private void OnEnable()
     {
@@ -41,6 +45,7 @@ public class PlayerCamera : MonoBehaviour
     {
         // if the camera is out, make it not out
         cameraOut = !cameraOut;
+        cameraOverlay.SetActive(cameraOut);
         Debug.Log("Camera toggled?: " + cameraOut);
 
         // animation of pulling it out/putting away
@@ -66,12 +71,12 @@ public class PlayerCamera : MonoBehaviour
     private Texture2D CapturePhoto()
     {
         // store the cams original render target
-        RenderTexture previousTexture = playerCamera.targetTexture;
+        //RenderTexture previousTexture = playerCamera.targetTexture;
         // make the camera render into our photo texture
-        playerCamera.targetTexture = photoRenderTexture;
+        //playerCamera.targetTexture = photoRenderTexture;
 
         // render the cams current view
-        playerCamera.Render();
+        polaroidCamera.Render();
 
         // save currently active render text
         RenderTexture previousActive = RenderTexture.active;
@@ -88,7 +93,7 @@ public class PlayerCamera : MonoBehaviour
 
         // restore prev settings
         RenderTexture.active = previousActive;
-        playerCamera.targetTexture = previousTexture;
+        //playerCamera.targetTexture = previousTexture;
 
         return photo;
     }
